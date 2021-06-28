@@ -1,0 +1,234 @@
+CREATE TABLE `cheltuiala` (
+  `id_cheltuiala` int(11) NOT NULL,
+  `id_evidenta` int(11) NOT NULL,
+  `valoare` int(11) NOT NULL,
+  `descriere` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_cheltuiala`),
+  KEY `fk_evidenta_cheltuiala` (`id_evidenta`),
+  CONSTRAINT `fk_evidenta_cheltuiala` FOREIGN KEY (`id_evidenta`) REFERENCES `evidenta_contabila` (`id_evidenta`)
+)
+
+CREATE TABLE `contract` (
+  `id_contract` int(11) NOT NULL,
+  `id_distribuitor` int(11) NOT NULL,
+  `id_patron` int(11) NOT NULL,
+  `data_inceperii` date NOT NULL,
+  `data_incheierii` date NOT NULL,
+  `valoarea` int(11) NOT NULL,
+  `descriere` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_contract`),
+  KEY `fk_patron_contract` (`id_patron`),
+  KEY `fk_distribuitor_contract` (`id_distribuitor`),
+  CONSTRAINT `fk_distribuitor_contract` FOREIGN KEY (`id_distribuitor`) REFERENCES `distribuitor` (`id_distribuitor`),
+  CONSTRAINT `fk_patron_contract` FOREIGN KEY (`id_patron`) REFERENCES `patron` (`id_patron`)
+)
+
+CREATE TABLE `distribuitor` (
+  `id_distribuitor` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `adresa` varchar(90) NOT NULL,
+  `telefon` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_distribuitor`)
+)
+
+CREATE TABLE `evidenta_contabila` (
+  `id_evidenta` int(11) NOT NULL,
+  `id_patron` int(11) NOT NULL,
+  `data` date NOT NULL,
+  PRIMARY KEY (`id_evidenta`),
+  KEY `fk_patron_evidenta` (`id_patron`),
+  CONSTRAINT `fk_patron_evidenta` FOREIGN KEY (`id_patron`) REFERENCES `patron` (`id_patron`)
+) 
+
+CREATE TABLE `farmacie` (
+  `id_farmacie` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `adresa` varchar(90) NOT NULL,
+  `telefon` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_farmacie`)
+)
+
+CREATE TABLE `farmacie_patron` (
+  `id_farmacie` int(11) NOT NULL,
+  `id_patron` int(11) NOT NULL,
+  PRIMARY KEY (`id_farmacie`,`id_patron`),
+  KEY `fk_patron` (`id_patron`),
+  CONSTRAINT `fk_farmacie` FOREIGN KEY (`id_farmacie`) REFERENCES `farmacie` (`id_farmacie`),
+  CONSTRAINT `fk_patron` FOREIGN KEY (`id_patron`) REFERENCES `patron` (`id_patron`)
+)
+
+CREATE TABLE `farmacist` (
+  `id_farmacist` int(11) NOT NULL,
+  `id_farmacie` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `adresa` varchar(90) NOT NULL,
+  `data_nasterii` date NOT NULL,
+  `telefon` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_farmacist`),
+  KEY `fk_farmacie_farmacist` (`id_farmacie`),
+  CONSTRAINT `fk_farmacie_farmacist` FOREIGN KEY (`id_farmacie`) REFERENCES `farmacie` (`id_farmacie`)
+)  
+
+CREATE TABLE `istoric` (
+  `id_farmacist` int(11) NOT NULL,
+  `data_inceput` date NOT NULL,
+  `salariu` int(11) NOT NULL,
+  `facultate_terminata` varchar(45) NOT NULL,
+  `loc_munca_anterior` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_farmacist`),
+  CONSTRAINT `fk_farmacist_istoric` FOREIGN KEY (`id_farmacist`) REFERENCES `farmacist` (`id_farmacist`)
+)
+
+CREATE TABLE `medicament` (
+  `id_medicament` int(11) NOT NULL,
+  `id_pacient` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `pret` int(11) NOT NULL,
+  `descriere` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_medicament`),
+  KEY `fk_client_medicament` (`id_pacient`),
+  CONSTRAINT `fk_client_medicament` FOREIGN KEY (`id_pacient`) REFERENCES `pacient` (`id_pacient`)
+) 
+
+CREATE TABLE `medicament_reteta` (
+  `id_medicament` int(11) NOT NULL,
+  `id_reteta` int(11) NOT NULL,
+  PRIMARY KEY (`id_medicament`,`id_reteta`),
+  KEY `fk_reteta` (`id_reteta`),
+  CONSTRAINT `fk_medicament` FOREIGN KEY (`id_medicament`) REFERENCES `medicament` (`id_medicament`),
+  CONSTRAINT `fk_reteta` FOREIGN KEY (`id_reteta`) REFERENCES `reteta` (`id_reteta`)
+) 
+
+CREATE TABLE `pacient` (
+  `id_pacient` int(11) NOT NULL,
+  `id_farmacie` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `adresa` varchar(90) NOT NULL,
+  `telefon` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_pacient`),
+  KEY `fk_farmacie_client` (`id_farmacie`),
+  CONSTRAINT `fk_farmacie_client` FOREIGN KEY (`id_farmacie`) REFERENCES `farmacie` (`id_farmacie`)
+)
+
+CREATE TABLE `patron` (
+  `id_patron` int(11) NOT NULL,
+  `nume` varchar(45) NOT NULL,
+  `prenume` varchar(45) NOT NULL,
+  `data_nasterii` date NOT NULL,
+  `telefon` varchar(45) NOT NULL,
+  `nationalitate` varchar(45) NOT NULL,
+  PRIMARY KEY (`id_patron`)
+)
+
+CREATE TABLE `reteta` (
+  `id_reteta` int(11) NOT NULL,
+  `id_pacient` int(11) NOT NULL,
+  PRIMARY KEY (`id_reteta`),
+  KEY `fk_client_reteta` (`id_pacient`),
+  CONSTRAINT `fk_client_reteta` FOREIGN KEY (`id_pacient`) REFERENCES `pacient` (`id_pacient`)
+)
+
+INSERT INTO cheltuiala VALUES(1, 1, 1500000, 'bani dati pe medicamente');
+INSERT INTO cheltuiala VALUES(2, 2, 900000, 'mita anaf');
+INSERT INTO cheltuiala VALUES(3, 3, 400, 'amenda parcare');
+INSERT INTO cheltuiala VALUES(4, 4, 20, 'hartie igienica');
+INSERT INTO cheltuiala VALUES(5, 5, 30000, 'calculatoare noi');
+INSERT INTO cheltuiala VALUES(6, 6, 90000, 'prima angajat');
+INSERT INTO cheltuiala VALUES(7, 7, 70, 'abonament metor');
+INSERT INTO cheltuiala VALUES(8, 8, 50, 'abonament ratb');
+INSERT INTO cheltuiala VALUES(9, 9, 90000, 'bani dati pe medicamente');
+INSERT INTO cheltuiala VALUES(10, 10, 7000, 'carduri bancare');
+INSERT INTO cheltuiala VALUES(11, 11, 7000, 'bani de nunta');
+INSERT INTO cheltuiala VALUES(12, 12, 70000, 'rastanta chirie');
+INSERT INTO cheltuiala VALUES(13, 13, 70000, 'restanta chirie');
+
+INSERT INTO contract VALUES(1, 1, 1, STR_TO_DATE('2017-01-01', '%d-%m-%Y'), STR_TO_DATE('2017-08-01', '%d-%m-%Y'), 20000, 'paracetamol');
+INSERT INTO contract VALUES(2, 4, 1, STR_TO_DATE('2017-01-01', '%d-%m-%Y'), STR_TO_DATE('2017-05-01', '%d-%m-%Y'), 40000, 'nurofen');
+INSERT INTO contract VALUES(3, 4, 2, STR_TO_DATE('2018-01-01', '%d-%m-%Y'), STR_TO_DATE('2019-01-01', '%d-%m-%Y'), 10000, 'nurofen');
+INSERT INTO contract VALUES(4, 2, 1, STR_TO_DATE('2019-10-01', '%d-%m-%Y'), STR_TO_DATE('2019-11-01', '%d-%m-%Y'), 40000, 'plasturi');
+INSERT INTO contract VALUES(5, 3, 1, STR_TO_DATE('2018-01-01', '%d-%m-%Y'), STR_TO_DATE('2019-01-01', '%d-%m-%Y'), 40000, 'fervex');
+INSERT INTO contract VALUES(6, 5, 2, STR_TO_DATE('2019-06-01', '%d-%m-%Y'), STR_TO_DATE('2019-12-31', '%d-%m-%Y'), 10000, 'omex');
+INSERT INTO contract VALUES(7, 2, 2, STR_TO_DATE('2018-12-21', '%d-%m-%Y'), STR_TO_DATE('2019-09-01', '%d-%m-%Y'), 10000, 'parasinus');
+INSERT INTO contract VALUES(8, 3, 1, STR_TO_DATE('2018-04-01', '%d-%m-%Y'), STR_TO_DATE('2018-09-01', '%d-%m-%Y'), 40000, 'cortex');
+INSERT INTO contract VALUES(9, 1, 2, STR_TO_DATE('2018-01-01', '%d-%m-%Y'), STR_TO_DATE('2019-10-31', '%d-%m-%Y'), 20000, 'strepsils');
+INSERT INTO contract VALUES(10, 1, 2, STR_TO_DATE('2017-01-01', '%d-%m-%Y'), STR_TO_DATE('2017-08-01', '%d-%m-%Y'), 20000, 'ceai de tei');
+
+INSERT INTO distribuitor VALUES(1, 'Pharmafarm', 'Bucuresti, sector 3, Bd. Basarabiei nr. 256', '0213-200-760');
+INSERT INTO distribuitor VALUES(2, 'Farmexim SA', 'Bucuresti, sector 1, Str. Pictor Rosenthal nr. 14', '0213-082-500');
+INSERT INTO distribuitor VALUES(3, 'Fildas Trading SRL', 'Bucuresti, sector 1, Soseaua Chitilei No. 60-62', '08008-345-327');
+INSERT INTO distribuitor VALUES(4, 'Farmexpert DCI', 'Bucuresti, sector 6, Strada Amilcar C. Sandulescu Nr. 7', '0213-999-156');
+INSERT INTO distribuitor VALUES(5, 'Mediplus Exim', 'Ilfov, Mogosoaia, str. Ciobanului, nr.133', '301-74-74');
+
+INSERT INTO evidenta_contabila VALUES(1, 1, STR_TO_DATE('2017-01-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(2, 2, STR_TO_DATE('2017-06-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(3, 1, STR_TO_DATE('2017-09-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(4, 1, STR_TO_DATE('2018-01-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(5, 2, STR_TO_DATE('2018-04-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(6, 1, STR_TO_DATE('2018-07-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(7, 2, STR_TO_DATE('2018-07-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(8, 1, STR_TO_DATE('2018-09-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(9, 2, STR_TO_DATE('2019-01-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(10, 1, STR_TO_DATE('2019-01-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(11, 1, STR_TO_DATE('2019-09-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(12, 1, STR_TO_DATE('2019-12-01', '%d-%m-%Y');
+INSERT INTO evidenta_contabila VALUES(13, 2, STR_TO_DATE('2019-12-01', '%d-%m-%Y');
+
+INSERT INTO farmacie VALUES(1, 'FARMACIA MB FARM SRL', 'Bd. Basarab Matei, Slobozia, Ialomita, 920092, Slobozia', '0243 234 454');
+
+INSERT INTO farmacie_patron VALUES(1, 1);
+INSERT INTO farmacie_patron VALUES(1, 2);
+
+INSERT INTO farmacist VALUES(1, 1, 'Vasile', 'Bloc U27, Nr.5, Bulevardul Cosminului 3, Slobozia', STR_TO_DATE('1976-07-18', '%d-%m-%Y'), '0751 499 586');
+INSERT INTO farmacist VALUES(2, 1, 'Gabriel', 'Bloc U27, Nr.5, Bulevardul Cosminului 3, Slobozia', STR_TO_DATE('1970-12-05', '%d-%m-%Y'), '0770 214 774');
+INSERT INTO farmacist VALUES(3, 1, 'Alex', 'Bloc M6, Nr.3, Aleea Nordului, Slobozia', STR_TO_DATE('1983-01-08', '%d-%m-%Y'), '0720 112 398');
+INSERT INTO farmacist VALUES(4, 1, 'Marian', 'Bloc G12, Strada Gării 3, Slobozia', STR_TO_DATE('1970-01-01', '%d-%m-%Y'), '0721 355 541');
+INSERT INTO farmacist VALUES(5, 1, 'Aurel', 'Bloc U2, Nr.7, Bulevardul Matei Basarab, Slobozia', STR_TO_DATE('1990-02-14', '%d-%m-%Y'), '0770 910 004');
+
+INSERT INTO istoric VALUES(1, STR_TO_DATE('2018-01-11', '%d-%m-%Y'), 2500, 'Universitatea Titu Maiorescu', 'Help Net');
+INSERT INTO istoric VALUES(2, STR_TO_DATE('2018-01-11', '%d-%m-%Y'), 2800, 'Biotera', '');
+INSERT INTO istoric VALUES(3, STR_TO_DATE('2017-11-01', '%d-%m-%Y'), 3000, 'Universitatea Bucuresti', 'Catena');
+INSERT INTO istoric VALUES(4, STR_TO_DATE('2019-07-21', '%d-%m-%Y'), 1800, 'Asistent Farmacist', '');
+INSERT INTO istoric VALUES(5, STR_TO_DATE('2019-01-12', '%d-%m-%Y'), 2200, 'Universitatea Titu Maiorescu', 'Sensiblu');
+
+INSERT INTO medicament VALUES(1, 6, 'Nurofen', 18, 'durere');
+INSERT INTO medicament VALUES(2, 6, 'Parasinus', 12, 'raceala');
+INSERT INTO medicament VALUES(3, 2, 'Nalgezin', 22, 'durere');
+INSERT INTO medicament VALUES(4, 5, 'Ibusinus', 12, 'raceala');
+INSERT INTO medicament VALUES(5, 2, 'Debridat', 14, 'dureri abdominale');
+INSERT INTO medicament VALUES(6, 3, 'Emetix', 25, 'voma');
+INSERT INTO medicament VALUES(7, 6, 'Plasturi', 5, 'rani');
+INSERT INTO medicament VALUES(8, 2, 'Strepsils', 36, 'durere gat');
+INSERT INTO medicament VALUES(9, 5, 'Gripovit', 18, 'raceala');
+INSERT INTO medicament VALUES(10, 4, 'Parusan', 66, 'sampon anti-cadere');
+INSERT INTO medicament VALUES(11, 1, 'Panadol', 26, 'antitermic');
+INSERT INTO medicament VALUES(12, 5, 'Aspacardin', 22, 'aritmi');
+INSERT INTO medicament VALUES(13, 3, 'Aspirina', 2, 'durere');
+INSERT INTO medicament VALUES(14, 6, 'Voltaren Gel', 40, 'dureri articulare');
+INSERT INTO medicament VALUES(15, 5, 'Bixtonim', 19, 'nas infundat');
+INSERT INTO medicament VALUES(16, 1, 'Grintus', 55, 'tuse');
+
+INSERT INTO medicament_reteta VALUES(1, 1);
+INSERT INTO medicament_reteta VALUES(2, 1);
+INSERT INTO medicament_reteta VALUES(8, 1);
+INSERT INTO medicament_reteta VALUES(15, 1);
+INSERT INTO medicament_reteta VALUES(2, 2);
+INSERT INTO medicament_reteta VALUES(4, 2);
+INSERT INTO medicament_reteta VALUES(7, 2);
+INSERT INTO medicament_reteta VALUES(8, 2);
+INSERT INTO medicament_reteta VALUES(9, 2);
+INSERT INTO medicament_reteta VALUES(5, 3);
+INSERT INTO medicament_reteta VALUES(6, 3);
+
+INSERT INTO pacient VALUES(1, 1, 'Petruta', 'Ialomita, Slobozia, bloc M21, Strada Margaretei', '0741 585 455');
+INSERT INTO pacient VALUES(2, 1, 'Maricica', 'Ialomita, Cocora, Strada Stefan cel Mare, Nr 2', '0243 587 911');
+INSERT INTO pacient VALUES(3, 1, 'Gheorghe', 'Ialomita, Gheorghe Lazar, Strada Panselutelor, Nr 175', '0721 554 070');
+INSERT INTO pacient VALUES(4, 1, 'Mitica', 'Ialomita, Colelia, Strada Pacii,nr 5', '0243 147 008');
+INSERT INTO pacient VALUES(5, 1, 'Vasile', 'Ialomita, Slobozia, Bulevardul Cosminului, Nr 5', '0724 551 793');
+INSERT INTO pacient VALUES(6, 1, 'Ionela', 'Ialoimta, Slobozia, Aleea Nordului, bloc M6', '0243 583 033');
+
+INSERT INTO patron VALUES(1, 'Simion', 'Roberto', STR_TO_DATE('1998-07-21', '%d-%m-%Y'), '0720 716 288', 'roman');
+INSERT INTO patron VALUES(2, 'Stancu', 'Gabriel', STR_TO_DATE('1997-12-15', '%d-%m-%Y'), '0721 587 222', 'roman');
+
+INSERT INTO reteta VALUES(1, 1);
+INSERT INTO reteta VALUES(3, 1);
+INSERT INTO reteta VALUES(2, 4);

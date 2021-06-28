@@ -1,0 +1,79 @@
+1. Selectati numele tuturor distribuitorilor care au incheiat contract cu primul patron in anul 2017
+
+select nume from distribuitor
+join contract on distribuitor.id_distribuitor=contract.id_distribuitor
+where contract.id_patron=1
+and contract.data_inceperii>='2017-01-01'
+and contract.data_incheierii<='2018-01-01'
+
+2. Afisati pentru fiecare patron valoarea cheltuielilor totale
+
+select patron.nume,patron.prenume, sum(cheltuiala.valoare) from patron
+join evidenta_contabila on patron.id_patron=evidenta_contabila.id_patron
+join cheltuiala on evidenta_contabila.id_evidenta=cheltuiala.id_evidenta
+group by patron.id_patron
+
+3. Cati ani au patronii?
+
+select round( datediff(now(), data_nasterii)/365) from patron
+
+4. Afisati numele angajatilor incepand cu cel mai vechi pana la cel mai nou.
+
+select farmacist.nume from farmacist
+join istoric on farmacist.id_farmacist=istoric.id_farmacist
+order by datediff(now(), istoric.data_inceput) desc
+
+5. Afisati pacientii care au acelasi nume precum farmacistii
+
+select pacient.nume from pacient
+join farmacie on pacient.id_farmacie=farmacie.id_farmacie
+join farmacist on farmacist.id_farmacie=farmacie.id_farmacie
+where farmacist.nume=pacient.nume
+
+6. Afisati pentru fiecare pacient suma medicamentelor pe care le-a cumparat in ordine descrescatoare
+
+select pacient.nume, sum(medicament.pret) from pacient
+join medicament on medicament.id_pacient=pacient.id_pacient
+group by pacient.nume
+order by sum(medicament.pret) desc
+
+7. Afisati pretul fiecarei retete
+
+select medicament_reteta.id_reteta,sum(medicament.pret)from medicament_reteta
+join medicament on medicament.id_medicament=medicament_reteta.id_medicament
+group by medicament_reteta.id_reteta
+
+8. Afisati toti farmacistii care nu au lucrat inainte
+
+select farmacist.nume from farmacist
+join istoric on istoric.id_farmacist=farmacist.id_farmacist
+where istoric.loc_munca_anterior is not null
+
+9. Afisati pentru fiecare an, incepand cu 2017, suma cheltuielilor
+
+select evidenta_contabila.data, sum( cheltuiala.valoare ) from evidenta_contabila
+join cheltuiala on cheltuiala.id_evidenta=evidenta_contabila.id_evidenta
+group by year(evidenta_contabila.data)
+
+
+10. Afisati farmacistul cu cel mai mic salariu respectiv cel mai mare
+
+select farmacist.nume, max(istoric.salariu) from farmacist
+join istoric on istoric.id_farmacist=farmacist.id_farmacist
+union
+select farmacist.nume, min(istoric.salariu) from farmacist
+join istoric on istoric.id_farmacist=farmacist.id_farmacist
+
+11. Afisati numarul de telefon al distribuitorului care ofera paracetamol
+
+select distribuitor.telefon from distribuitor
+join contract on contract.id_distribuitor = distribuitor.id_distribuitor
+where contract.descriere="paracetamol"
+
+12. Afisati numele farmacistilor care au terminat aceeasi facultate
+
+select farmacist.nume,count(istoric.facultate_terminata) from farmacist
+join istoric on istoric.id_farmacist=farmacist.id_farmacist
+group by facultate_terminata
+having count(istoric.facultate_terminata)>1
+
